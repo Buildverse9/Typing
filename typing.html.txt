@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bombay High Court — Typing Examination</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy-mid: #162032;
+    --navy-light: #1e2f42;
+    --gold: #c9a84c;
+    --gold-light: #e2c47a;
+    --gold-dim: #8a6e2f;
+    --cream: #f5f0e8;
+    --cream-dim: #d4cfc5;
+    --white: #ffffff;
+    --correct: #4caf7d;
+    --wrong: #e05555;
+    --wrong-bg: rgba(224,85,85,0.18);
+    --current-bg: rgba(201,168,76,0.22);
+    --shadow: 0 8px 40px rgba(0,0,0,0.5);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--navy);
+    color: var(--cream);
+    font-family: 'EB Garamond', Georgia, serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(201,168,76,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 80%, rgba(201,168,76,0.03) 0%, transparent 50%),
+      url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* ── Header ── */
+  header {
+    width: 100%;
+    text-align: center;
+    padding: 32px 20px 24px;
+    border-bottom: 1px solid rgba(201,168,76,0.25);
+    position: relative;
+    background: linear-gradient(180deg, rgba(201,168,76,0.06) 0%, transparent 100%);
+  }
+
+  .emblem {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .emblem svg { width: 72px; height: 72px; }
+
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.1rem, 3vw, 1.65rem);
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  header p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--cream-dim);
+    margin-top: 5px;
+    letter-spacing: 0.04em;
+  }
+
+  .gold-rule {
+    width: 120px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 14px auto 0;
+  }
+
+  /* ── Main ── */
+  main {
+    width: 100%;
+    max-width: 940px;
+    padding: 28px 20px 60px;
+  }
+
+  /* ── Stats bar ── */
+  .stats-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--navy-mid);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 8px;
+    padding: 12px 20px;
+    text-align: center;
+    min-width: 120px;
+    flex: 1;
+    max-width: 180px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .stat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+
+  .stat-value.danger { color: var(--wrong); }
+  .stat-value.success { color: var(--correct); }
+
+  #timer-val {
+    font-size: 2rem;
+    transition: color 0.3s;
+  }
+
+  #timer-val.urgent { color: var(--wrong) !important; animation: pulse-red 1s infinite; }
+
+  @keyframes pulse-red {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.55; }
+  }
+
+  /* ── Controls ── */
+  .controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 11px 28px;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+    color: var(--navy);
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(201,168,76,0.25);
+  }
+
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,168,76,0.4); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid rgba(201,168,76,0.4);
+  }
+
+  .btn-secondary:hover { background: rgba(201,168,76,0.08); border-color: var(--gold); }
+
+  /* ── Passage Box ── */
+  .passage-container {
+    background: var(--navy-mid);
+    border: 1px solid rgba(201,168,76,0.18);
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    position: relative;
+    box-shadow: var(--shadow);
+    user-select: none;
+  }
+
+  .passage-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .passage-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(201,168,76,0.15);
+  }
+
+  #passage-display {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: clamp(1rem, 2vw, 1.15rem);
+    line-height: 2;
+    color: var(--cream-dim);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  #passage-display .char { position: relative; transition: color 0.05s; }
+  #passage-display .char.correct { color: var(--correct); }
+  #passage-display .char.wrong { color: var(--wrong); background: var(--wrong-bg); border-radius: 2px; }
+  #passage-display .char.current {
+    background: var(--current-bg);
+    border-radius: 2px;
+    outline: 1px solid rgba(201,168,76,0.4);
+  }
+
+  /* Blinking cursor */
+  #passage-display .char.current::after {
+    content: '';
+    position: absolute;
+    left: -1px; top: 2px; bottom: 2px;
+    width: 2px;
+    background: var(--gold);
+    animation: blink 0.9s step-end infinite;
+    border-radius: 2px;
+  }
+
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+  /* ── Input ── */
+  .input-area {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .input-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .input-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(201,168,76,0.15);
+  }
+
+  #typing-input {
+    width: 100%;
+    background: var(--navy-light);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 8px;
+    color: var(--cream);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    padding: 14px 18px;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    height: 80px;
+    line-height: 1.6;
+  }
+
+  #typing-input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
+  }
+
+  #typing-input:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .hint {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: rgba(201,168,76,0.45);
+    margin-top: 7px;
+    text-align: right;
+  }
+
+  /* ── Progress bar ── */
+  .progress-wrap {
+    height: 4px;
+    background: rgba(201,168,76,0.1);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  #progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  /* ── Result Modal ── */
+  #result-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13,27,42,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  #result-overlay.show { display: flex; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .result-card {
+    background: var(--navy-mid);
+    border: 1px solid rgba(201,168,76,0.35);
+    border-radius: 16px;
+    padding: 48px 52px;
+    max-width: 560px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+    position: relative;
+    animation: slideUp 0.35s ease;
+  }
+
+  @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  .result-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    border-radius: 2px;
+  }
+
+  .result-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .result-score-big {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 5rem;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .result-score-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .result-item {
+    background: var(--navy-light);
+    border-radius: 8px;
+    padding: 14px;
+    border: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .result-item-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.52rem;
+    letter-spacing: 0.15em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+
+  .result-item-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem;
+    color: var(--cream);
+  }
+
+  .result-item-value.green { color: var(--correct); }
+  .result-item-value.red { color: var(--wrong); }
+
+  .result-formula {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: rgba(212,207,197,0.55);
+    margin-bottom: 28px;
+    padding: 12px 16px;
+    background: rgba(201,168,76,0.04);
+    border-radius: 6px;
+    border: 1px solid rgba(201,168,76,0.08);
+  }
+
+  .result-verdict {
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    padding: 10px 20px;
+    border-radius: 6px;
+    margin-bottom: 28px;
+    display: inline-block;
+  }
+
+  .result-verdict.pass { background: rgba(76,175,125,0.15); color: var(--correct); border: 1px solid rgba(76,175,125,0.3); }
+  .result-verdict.fail { background: rgba(224,85,85,0.12); color: var(--wrong); border: 1px solid rgba(224,85,85,0.25); }
+
+  /* ── Instructions panel ── */
+  .instructions {
+    background: var(--navy-mid);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 10px;
+    padding: 20px 28px;
+    margin-bottom: 24px;
+  }
+
+  .inst-title {
+    font-family: 'Cinzel', serif;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .inst-list {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 8px;
+  }
+
+  .inst-list li {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    color: var(--cream-dim);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .inst-list li::before {
+    content: '▸';
+    color: var(--gold-dim);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── Overlay start screen ── */
+  #start-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--navy);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    background-image:
+      radial-gradient(ellipse at 30% 40%, rgba(201,168,76,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 60%, rgba(201,168,76,0.04) 0%, transparent 50%);
+  }
+
+  #start-overlay h2 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.4rem, 4vw, 2.4rem);
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+  }
+
+  #start-overlay .sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: var(--cream-dim);
+    font-size: 1.1rem;
+    margin-bottom: 36px;
+  }
+
+  .start-rules {
+    background: var(--navy-mid);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 12px;
+    padding: 28px 36px;
+    max-width: 520px;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 32px;
+  }
+
+  .start-rules h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .start-rules ul {
+    list-style: none;
+  }
+
+  .start-rules ul li {
+    font-family: 'EB Garamond', serif;
+    font-size: 1rem;
+    color: var(--cream);
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.07);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .start-rules ul li:last-child { border-bottom: none; }
+
+  .start-rules ul li .dot {
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* Hide/show */
+  .hidden { display: none !important; }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    color: rgba(212,207,197,0.3);
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ Start Overlay ══ -->
+<div id="start-overlay">
+  <div class="emblem" style="margin-bottom:18px;">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="50" cy="50" r="38" fill="none" stroke="#c9a84c" stroke-width="0.6" stroke-dasharray="3,4"/>
+      <text x="50" y="42" text-anchor="middle" font-family="Cinzel,serif" font-size="9" fill="#c9a84c" letter-spacing="1">HIGH COURT</text>
+      <text x="50" y="55" text-anchor="middle" font-family="Cinzel,serif" font-size="7" fill="#8a6e2f" letter-spacing="1">BOMBAY</text>
+      <path d="M30 60 Q50 70 70 60" fill="none" stroke="#c9a84c" stroke-width="1" stroke-linecap="round"/>
+      <path d="M35 63 Q50 73 65 63" fill="none" stroke="#8a6e2f" stroke-width="0.7" stroke-linecap="round"/>
+      <line x1="50" y1="18" x2="50" y2="30" stroke="#c9a84c" stroke-width="1.2" stroke-linecap="round"/>
+      <circle cx="50" cy="15" r="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="50" cy="15" r="1.5" fill="#c9a84c"/>
+    </svg>
+  </div>
+  <h2>Bombay High Court</h2>
+  <p class="sub">Official Typing Examination Portal</p>
+
+  <div class="start-rules">
+    <h3>Examination Rules &amp; Marking Scheme</h3>
+    <ul>
+      <li><span class="dot">◆</span> A passage of approximately 400 words will be presented for typing.</li>
+      <li><span class="dot">◆</span> Total examination duration: <strong>10 minutes</strong>.</li>
+      <li><span class="dot">◆</span> Gross marks = Words correctly typed.</li>
+      <li><span class="dot">◆</span> Penalty: Every <strong>4 mistakes</strong> deduct <strong>1 mark</strong>.</li>
+      <li><span class="dot">◆</span> Uncompleted words (words remaining) are also deducted.</li>
+      <li><span class="dot">◆</span> <em>Net Score = Correct Words − ⌊Mistakes ÷ 4⌋ − Words Remaining</em></li>
+      <li><span class="dot">◆</span> A new unique passage is generated for every session.</li>
+      <li><span class="dot">◆</span> Do not use Backspace to go back — focus on forward accuracy.</li>
+    </ul>
+  </div>
+
+  <button class="btn-primary" style="font-size:0.85rem; padding:14px 48px;" onclick="startExam()">Begin Examination</button>
+</div>
+
+<!-- ══ Header ══ -->
+<header>
+  <div class="emblem">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+      <circle cx="50" cy="50" r="38" fill="none" stroke="#c9a84c" stroke-width="0.6" stroke-dasharray="3,4"/>
+      <text x="50" y="42" text-anchor="middle" font-family="Cinzel,serif" font-size="9" fill="#c9a84c" letter-spacing="1">HIGH COURT</text>
+      <text x="50" y="55" text-anchor="middle" font-family="Cinzel,serif" font-size="7" fill="#8a6e2f" letter-spacing="1">BOMBAY</text>
+      <path d="M30 60 Q50 70 70 60" fill="none" stroke="#c9a84c" stroke-width="1" stroke-linecap="round"/>
+      <line x1="50" y1="18" x2="50" y2="30" stroke="#c9a84c" stroke-width="1.2" stroke-linecap="round"/>
+      <circle cx="50" cy="15" r="4" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+      <circle cx="50" cy="15" r="1.5" fill="#c9a84c"/>
+    </svg>
+  </div>
+  <h1>Bombay High Court — Typing Examination</h1>
+  <p>Official Practice Portal · Established Under the Judiciary</p>
+  <div class="gold-rule"></div>
+</header>
+
+<main>
+
+  <!-- Stats bar -->
+  <div class="stats-bar">
+    <div class="stat-card">
+      <span class="stat-label">Time Remaining</span>
+      <span class="stat-value" id="timer-val">10:00</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Words Typed</span>
+      <span class="stat-value" id="words-typed">0</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Mistakes</span>
+      <span class="stat-value" id="mistake-count">0</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Accuracy</span>
+      <span class="stat-value" id="accuracy-val">100%</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Net Score</span>
+      <span class="stat-value" id="net-score">—</span>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-wrap">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="btn-primary" id="btn-start" onclick="startExam()">▶ Start Examination</button>
+    <button class="btn-secondary" onclick="resetExam()">↺ New Passage</button>
+  </div>
+
+  <!-- Passage display -->
+  <div class="passage-container">
+    <div class="passage-label">Passage for Typing</div>
+    <div id="passage-display"></div>
+  </div>
+
+  <!-- Typing input -->
+  <div class="input-area">
+    <div class="input-label">Your Input</div>
+    <textarea id="typing-input" placeholder="Click 'Start Examination' then begin typing here…" disabled autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+    <div class="hint">Type continuously — do not use arrow keys or backspace aggressively</div>
+  </div>
+
+  <!-- Instructions -->
+  <div class="instructions">
+    <div class="inst-title">Quick Reference</div>
+    <ul class="inst-list">
+      <li>Green text = correctly typed characters</li>
+      <li>Red text = mistakenly typed characters</li>
+      <li>Gold highlight = current position cursor</li>
+      <li>4 errors deduct 1 mark from final score</li>
+      <li>Uncompleted words are also deducted</li>
+      <li>Timer auto-submits at 00:00</li>
+    </ul>
+  </div>
+
+</main>
+
+<footer>Bombay High Court Typing Examination · Practice Portal · For Official Use Only</footer>
+
+<!-- ══ Result Overlay ══ -->
+<div id="result-overlay">
+  <div class="result-card">
+    <div class="result-title">Examination Result</div>
+    <div class="result-score-big" id="res-score">0</div>
+    <div class="result-score-label">Net Marks</div>
+    <div id="res-verdict" class="result-verdict pass">Result Pending</div>
+    <div class="result-grid">
+      <div class="result-item">
+        <div class="result-item-label">Words Typed</div>
+        <div class="result-item-value" id="res-typed">0</div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Words Remaining</div>
+        <div class="result-item-value red" id="res-remaining">0</div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Total Mistakes</div>
+        <div class="result-item-value red" id="res-mistakes">0</div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Accuracy</div>
+        <div class="result-item-value green" id="res-accuracy">0%</div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Gross Words</div>
+        <div class="result-item-value" id="res-gross">0</div>
+      </div>
+      <div class="result-item">
+        <div class="result-item-label">Error Penalty</div>
+        <div class="result-item-value red" id="res-penalty">0</div>
+      </div>
+    </div>
+    <div class="result-formula">
+      Net Score = Correct Words − ⌊Mistakes ÷ 4⌋ − Words Remaining
+    </div>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn-primary" onclick="resetExam()">↺ Try Again</button>
+      <button class="btn-secondary" onclick="document.getElementById('result-overlay').classList.remove('show')">✕ Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  PASSAGES  — 10 unique ~400-word passages
+// ══════════════════════════════════════════
+const PASSAGES = [
+
+`The Bombay High Court, one of the oldest and most prestigious High Courts of India, was established in the year eighteen sixty-two under the High Courts Act. It has jurisdiction over the State of Maharashtra and the Union Territory of Goa, Dadra and Nagar Haveli, and Daman and Diu. The court is headquartered in the heritage building situated at the southern tip of Mumbai, overlooking the famous Marine Drive. Over the decades, the court has delivered landmark judgements that have shaped the constitutional and legal landscape of the nation. The court operates under the supervision of the Chief Justice and several other judges appointed by the President of India on the recommendation of the collegium. The registry of the court manages all administrative and procedural functions, ensuring that cases are filed, numbered, and listed for hearing in accordance with the established rules and regulations. The court handles matters ranging from civil and criminal appeals to writ petitions filed under Articles 226 and 227 of the Constitution of India. Public Interest Litigations have also been a significant part of the court's docket, wherein any citizen may approach the court in matters of public importance. The court has benches situated at Nagpur, Aurangabad, and Panaji in addition to the principal seat at Mumbai. Each bench has its own territorial jurisdiction and functions as an extension of the principal seat. The administration of justice requires not only well-trained judges but also efficient and accurate clerical staff who can maintain records with precision and diligence. Typists and clerks form the backbone of judicial administration. Their work involves transcribing court orders, maintaining cause lists, preparing judgement copies, and ensuring that all official communications are dispatched in a timely manner. A candidate seeking employment in the court must demonstrate proficiency in the English language, sound knowledge of legal terminology, and the ability to type accurately at a prescribed speed. The typing examination is designed to evaluate both speed and accuracy under time pressure. Candidates are expected to read the passage carefully before commencing and must focus on minimising errors while maintaining a steady pace throughout the duration of the examination.`,
+
+`The administration of justice in a democratic country like India rests on three fundamental pillars: the legislature, the executive, and the judiciary. Among these, the judiciary holds a unique and sacred position as the guardian of the Constitution and the protector of the fundamental rights of every citizen. The High Courts of India serve as the primary institutions for the administration of justice at the State level, and their functioning is governed by the provisions of the Constitution as well as various statutes enacted by Parliament and the respective State Legislatures. Judicial independence is the cornerstone of a fair and impartial legal system. Judges are expected to decide cases without any fear or favour, and the appointment process is designed to insulate the judiciary from political interference. The collegium system of appointment, which has evolved through a series of landmark Supreme Court judgements, ensures that judges are selected on the basis of merit, seniority, and suitability for the high office. The court registry plays an indispensable role in the day-to-day administration of the judicial system. It receives petitions, maintains dockets, prepares cause lists, and ensures the proper filing and circulation of orders and judgements. The staff working in the registry must possess a thorough understanding of civil and criminal procedure, as well as a working knowledge of the High Court Rules and subordinate legislation. Typing is one of the most fundamental skills required of any court employee. The accurate reproduction of legal documents, orders, and official correspondence requires not only speed but also meticulous attention to detail. A single typographical error in a court order can lead to confusion, delays, and in some cases, miscarriage of justice. Therefore, the Bombay High Court conducts regular examinations to assess the typing proficiency of candidates who aspire to join its administrative cadre. The examination tests the ability of candidates to type a given passage accurately within a stipulated period of time, and the marking scheme takes into account both the number of words typed correctly and the number of errors committed during the course of the examination.`,
+
+`Every citizen of India has the right to approach a court of law for the redressal of grievances arising from the violation of their legal or constitutional rights. This right is guaranteed under the Constitution and is one of the most important safeguards against arbitrary action by the State or any other authority. The process of approaching a court involves filing a petition or plaint, paying the requisite court fee, and serving notice on the opposite party. Thereafter, the matter is listed for hearing before the concerned bench, where both parties are afforded an opportunity to present their respective arguments. The court, after hearing both sides and examining the evidence on record, pronounces its judgement or order, which is then implemented by the concerned authority. The Bombay High Court has a long and distinguished history of upholding the rule of law and protecting the rights of individuals against state excess. It has delivered path-breaking judgements on matters relating to personal liberty, freedom of speech, the right to privacy, environmental protection, and the rights of marginalised communities. These judgements continue to serve as precedents for courts across the country and reflect the court's commitment to the principles enshrined in the preamble to the Constitution. The efficient functioning of the court depends on the dedicated service of a large number of officials, including stenographers, typists, clerks, peons, and other support staff. Each category of employee plays a specific and important role in ensuring that the judicial machinery operates smoothly and without unnecessary delay. The typing staff, in particular, are responsible for producing accurate and legible copies of court orders, summons, notices, and other documents that form part of the official record. Given the volume of work handled by the court on a daily basis, it is essential that typists possess both speed and accuracy. The present examination is designed to test these qualities and to identify candidates who are best suited to serve the court in this important capacity.`,
+
+`The legal system of India is a complex and dynamic framework that draws upon English common law, personal laws of various communities, and a comprehensive body of legislation enacted since independence. The courts at various levels — from the district courts at the base to the Supreme Court at the apex — together constitute an integrated judicial hierarchy that ensures access to justice for every citizen regardless of their social or economic status. Among the High Courts, the Bombay High Court stands out for its vast territorial jurisdiction, its rich jurisprudence, and its contribution to the development of commercial and constitutional law in India. The court handles thousands of cases every year, ranging from simple civil disputes to complex commercial arbitrations involving multinational corporations. It also exercises its criminal jurisdiction over serious offences triable under the Code of Criminal Procedure and various special statutes. The proper maintenance of court records is a matter of utmost importance from the perspective of legal history and judicial accountability. Records of proceedings, certified copies of judgements, and authenticated copies of orders must be maintained in a manner that allows for easy retrieval and reference. The court's record room houses documents dating back several decades, many of which are of immense historical significance. Typists and clerks entrusted with the responsibility of maintaining these records must exercise the highest degree of care and precision in their work. The examination for typing posts in the Bombay High Court is conducted in accordance with the rules framed by the court and is supervised by the Registrar General. Candidates are required to type a passage of approximately four hundred words within a period of ten minutes. The net score is calculated by deducting the error penalty and the words remaining from the gross words typed. Only those who meet the prescribed minimum standard of accuracy and speed are considered for further rounds of the selection process.`,
+
+`The principle of natural justice is one of the oldest and most fundamental doctrines in the realm of administrative and constitutional law. It consists essentially of two rules: the rule against bias, commonly expressed by the Latin maxim nemo judex in causa sua, meaning no person shall be a judge in their own cause; and the rule of fair hearing, known as audi alteram partem, which requires that every person must be given an opportunity to be heard before any adverse decision is taken against them. These principles are not merely procedural formalities but are substantive safeguards designed to ensure that decision-making by courts, tribunals, and administrative authorities is fair, impartial, and in accordance with the law. The Bombay High Court has consistently applied and elaborated upon these principles in a wide variety of contexts, ranging from service matters involving government employees to disciplinary proceedings against professionals. The court has held that any decision taken without affording a fair hearing to the affected party is liable to be set aside, regardless of whether the decision maker was acting in good faith or not. In service matters, the principles of natural justice have been invoked to protect employees from arbitrary dismissal, suspension, or reduction in rank. Courts have insisted that the charges must be communicated to the employee in writing, that a proper enquiry must be conducted in accordance with the prescribed procedure, and that the order of punishment must be based on the evidence adduced during the enquiry. The typing staff of the court assist in the preparation of documents relating to such enquiries and disciplinary matters, and must therefore have a sound understanding of the relevant legal and procedural requirements. Their work demands not only typing proficiency but also a sense of responsibility and an awareness of the confidential nature of the documents they handle on a daily basis.`,
+
+`Commercial disputes have become an increasingly important part of the work handled by the Bombay High Court over the past several decades. Mumbai, being the financial capital of India and home to the country's premier stock exchange and banking institutions, generates a very large volume of commercial litigation involving contracts, banking transactions, insolvency proceedings, intellectual property rights, and disputes arising from international trade and commerce. The court has a dedicated Commercial Division established under the Commercial Courts Act of two thousand fifteen, which handles high-value commercial disputes on a fast-track basis with strict timelines for filing, discovery, and hearing. The establishment of this division reflects the government's commitment to improving the ease of doing business in India and reducing the time taken to resolve commercial disputes. Parties in commercial disputes often require certified copies of orders and judgements for the purposes of enforcement, appeal, or compliance. The typing staff of the court are responsible for producing these certified copies accurately and within the time stipulated by the rules. Any error in the copy can have serious consequences, including the rejection of the document by an appellate court or an executing court. The Bombay High Court rules prescribe specific formats for various types of documents, including plaints, written statements, affidavits, and petitions. Typists must be familiar with these formats and must ensure that every document conforms to the prescribed format before it is submitted to the registry for filing. The typing examination is therefore not merely a test of speed but also an assessment of the candidate's ability to produce accurate and properly formatted documents under conditions of time pressure. Candidates who perform well in this examination demonstrate that they possess the qualities necessary for effective service in the court's administrative cadre.`,
+
+`The protection of fundamental rights guaranteed under Part Three of the Constitution of India is one of the primary functions of the High Courts. Under Article 226, a High Court has the power to issue prerogative writs including writs of Mandamus, Certiorari, Prohibition, Habeas Corpus, and Quo Warranto for the enforcement of fundamental rights and for any other purpose. The jurisdiction under Article 226 is broader than the jurisdiction of the Supreme Court under Article 32, since it extends to all cases where any legal right has been infringed and is not limited to violations of fundamental rights alone. The Bombay High Court regularly entertains writ petitions filed by individuals, companies, non-governmental organisations, and public interest litigants on a wide range of matters including land acquisition, environmental protection, housing rights, education, public health, and the enforcement of statutory obligations by government authorities. The writ jurisdiction of the court has been used to challenge arbitrary executive action, to compel authorities to perform their statutory duties, and to protect citizens from unlawful detention and imprisonment. In matters of personal liberty, the court is particularly vigilant and has consistently held that no person shall be deprived of their liberty except in accordance with a procedure established by law. The preparation of orders in writ matters requires a high degree of precision, since these orders are often addressed to senior government officials and must be drafted in language that is clear, unambiguous, and legally accurate. Typists working in the court must therefore possess not only technical typing skills but also a sufficient understanding of legal drafting conventions to ensure that the documents they produce faithfully reflect the intentions of the court. The typing examination helps identify candidates who possess these combined competencies and are ready to contribute effectively to the administration of the court.`,
+
+`The legal profession in India is governed by the Advocates Act of nineteen hundred and sixty-one, which established the Bar Council of India as the apex regulatory body for the legal profession and the State Bar Councils as regulatory bodies at the state level. Advocates enrolled with a State Bar Council are entitled to practice before the courts situated within the territorial jurisdiction of that council, while those who pass the All India Bar Examination are entitled to practice before the Supreme Court and the High Courts throughout the country. The relationship between advocates and the courts is one of mutual respect and professional courtesy. Advocates are officers of the court and owe a duty not only to their clients but also to the court, and they are expected to conduct themselves with integrity and honesty in all their dealings with the judicial system. The court staff, including typists and clerks, interact regularly with advocates and their clients in the course of their official duties. They are expected to maintain a professional demeanor, to treat all persons equally and without discrimination, and to discharge their functions impartially and in accordance with the rules. The registry of the court provides various services to advocates and litigants, including the acceptance and examination of plaints and petitions, the issuance of notices and summons, the preparation of cause lists, the supply of certified copies of orders and judgements, and the maintenance of court records. Each of these functions requires a certain level of skill, attention to detail, and commitment to service. The typing posts in the court are integral to the functioning of the registry, and the persons appointed to these posts bear a direct responsibility for ensuring that the court's administrative functions are carried out efficiently, accurately, and in a manner that upholds the dignity and prestige of the institution.`,
+
+`Environmental law has emerged as one of the most dynamic and rapidly evolving areas of jurisprudence in India over the past three decades. The Supreme Court and the High Courts have been at the forefront of developing a robust body of environmental law through their interpretation of Article 21 of the Constitution, which guarantees the right to life and personal liberty. The courts have interpreted this right broadly to include the right to a clean and healthy environment, the right to livable conditions, and the right to be protected from pollution and environmental degradation. The Bombay High Court has delivered numerous landmark orders in environmental matters affecting the city of Mumbai and the State of Maharashtra. These orders have dealt with issues such as the pollution of rivers and coastal areas, the illegal construction of buildings in ecologically sensitive zones, the disposal of solid waste, and the protection of mangroves and other fragile ecosystems. The court has constituted expert committees and appointed commissioners to oversee the implementation of its orders in environmental matters, reflecting its determination to ensure that its directions translate into tangible improvements in environmental conditions on the ground. The documentation of environmental proceedings requires a great deal of precision, since these cases often involve technical data, expert opinions, statutory provisions, and complex factual matrices. Typists assigned to benches hearing environmental matters must be particularly careful to reproduce technical terms, numerical data, and references to statutory provisions accurately and without error. Any inaccuracy in these documents can lead to confusion and may compromise the court's ability to monitor compliance with its orders effectively. The typing examination provides a reliable means of assessing the proficiency of candidates in this important aspect of court administration.`,
+
+`The family courts in India were established under the Family Courts Act of nineteen hundred and eighty-four, with the objective of promoting conciliation in disputes relating to marriage and family affairs and securing speedy settlement of such disputes. These courts function alongside the regular civil courts and handle matters such as matrimonial disputes, custody of children, maintenance, and the division of matrimonial property. The Bombay High Court exercises appellate jurisdiction over the orders passed by the family courts situated within its territorial jurisdiction and regularly receives appeals and revisions in matrimonial matters. The handling of family court matters requires a high degree of sensitivity, since these cases often involve the most intimate and personal aspects of the lives of the parties concerned. Court staff, including typists and clerks, must treat all documents relating to such matters with the utmost confidentiality and must exercise particular care to ensure that personal information contained in these documents is not disclosed to unauthorised persons. The preparation of orders in matrimonial matters often involves the use of specific legal terminology relating to grounds for divorce, interim maintenance, permanent alimony, child custody arrangements, and visitation rights. Typists must be familiar with this terminology and must ensure that it is reproduced accurately in the documents they prepare. The court also deals with cases involving the protection of women from domestic violence under the Protection of Women from Domestic Violence Act of two thousand five. These matters are of considerable social significance and require prompt and accurate documentation to ensure that the relief granted by the court is communicated to the relevant authorities without delay. The typing examination thus serves the important purpose of identifying candidates who can handle the varied and sensitive demands of court administration with proficiency and professionalism.`
+
+];
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let currentPassage = '';
+let passageChars = [];
+let typedIndex = 0;
+let mistakes = 0;
+let wrongSet = new Set();    // indices that are wrong
+let correctSet = new Set();  // indices typed correctly
+let timerInterval = null;
+let secondsLeft = 600; // 10 minutes
+let examStarted = false;
+let examFinished = false;
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+function pickPassage() {
+  const idx = Math.floor(Math.random() * PASSAGES.length);
+  return PASSAGES[idx].trim();
+}
+
+function buildPassageDisplay(passage) {
+  const display = document.getElementById('passage-display');
+  passageChars = passage.split('');
+  display.innerHTML = passageChars.map((ch, i) => {
+    const escaped = ch === '<' ? '&lt;' : ch === '>' ? '&gt;' : ch === '&' ? '&amp;' : ch === '\n' ? '<br>' : ch;
+    return `<span class="char" id="c${i}">${escaped}</span>`;
+  }).join('');
+  updateCursor();
+}
+
+function updateCursor() {
+  document.querySelectorAll('.char.current').forEach(el => el.classList.remove('current'));
+  const el = document.getElementById('c' + typedIndex);
+  if (el) el.classList.add('current');
+}
+
+function resetExam() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  examStarted = false;
+  examFinished = false;
+  typedIndex = 0;
+  mistakes = 0;
+  wrongSet.clear();
+  correctSet.clear();
+  secondsLeft = 600;
+
+  currentPassage = pickPassage();
+  buildPassageDisplay(currentPassage);
+
+  document.getElementById('typing-input').value = '';
+  document.getElementById('typing-input').disabled = true;
+  document.getElementById('timer-val').textContent = '10:00';
+  document.getElementById('timer-val').classList.remove('urgent');
+  document.getElementById('words-typed').textContent = '0';
+  document.getElementById('mistake-count').textContent = '0';
+  document.getElementById('accuracy-val').textContent = '100%';
+  document.getElementById('net-score').textContent = '—';
+  document.getElementById('progress-bar').style.width = '0%';
+  document.getElementById('btn-start').textContent = '▶ Start Examination';
+  document.getElementById('result-overlay').classList.remove('show');
+}
+
+function startExam() {
+  // Hide start overlay if present
+  const startOverlay = document.getElementById('start-overlay');
+  if (startOverlay) startOverlay.style.display = 'none';
+
+  if (examStarted && !examFinished) return;
+  if (examFinished) { resetExam(); return; }
+
+  if (!currentPassage) {
+    currentPassage = pickPassage();
+    buildPassageDisplay(currentPassage);
+  }
+
+  examStarted = true;
+  document.getElementById('typing-input').disabled = false;
+  document.getElementById('typing-input').focus();
+  document.getElementById('btn-start').textContent = '⏳ Exam in Progress';
+
+  timerInterval = setInterval(() => {
+    secondsLeft--;
+    const m = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+    const s = (secondsLeft % 60).toString().padStart(2, '0');
+    document.getElementById('timer-val').textContent = `${m}:${s}`;
+
+    if (secondsLeft <= 60) {
+      document.getElementById('timer-val').classList.add('urgent');
+    }
+
+    if (secondsLeft <= 0) {
+      endExam();
+    }
+  }, 1000);
+}
+
+// ══════════════════════════════════════════
+//  TYPING LOGIC
+// ══════════════════════════════════════════
+document.getElementById('typing-input').addEventListener('keydown', function(e) {
+  if (!examStarted || examFinished) return;
+
+  // Disable navigation keys
+  if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key)) {
+    e.preventDefault();
+  }
+});
+
+document.getElementById('typing-input').addEventListener('input', function(e) {
+  if (!examStarted || examFinished) return;
+
+  const inputVal = this.value;
+  const inputLen = inputVal.length;
+
+  // We track character by character
+  // The input box holds everything typed so far
+  // We only look at the latest character typed
+
+  if (inputLen > passageChars.length) {
+    this.value = inputVal.slice(0, passageChars.length);
+    return;
+  }
+
+  // Update character states
+  for (let i = 0; i < inputLen; i++) {
+    const el = document.getElementById('c' + i);
+    if (!el) continue;
+    el.classList.remove('correct', 'wrong', 'current');
+
+    if (inputVal[i] === passageChars[i]) {
+      el.classList.add('correct');
+      correctSet.add(i);
+      wrongSet.delete(i);
+    } else {
+      el.classList.add('wrong');
+      wrongSet.add(i);
+      correctSet.delete(i);
+    }
+  }
+
+  // Reset chars beyond input
+  for (let i = inputLen; i < passageChars.length; i++) {
+    const el = document.getElementById('c' + i);
+    if (el) el.classList.remove('correct', 'wrong', 'current');
+  }
+
+  typedIndex = inputLen;
+  updateCursor();
+
+  // Count mistakes as total wrong chars
+  mistakes = wrongSet.size;
+
+  // Stats
+  const totalTyped = inputLen;
+  const accuracy = totalTyped > 0 ? Math.round((correctSet.size / totalTyped) * 100) : 100;
+
+  // Words correctly typed = number of complete correct words
+  const wordsTyped = countCorrectWords(inputVal);
+  const passageWords = currentPassage.trim().split(/\s+/).length;
+  const wordsRemaining = Math.max(0, passageWords - countWordsTyped(inputVal));
+  const penalty = Math.floor(mistakes / 4);
+  const netScore = Math.max(0, wordsTyped - penalty - wordsRemaining);
+
+  document.getElementById('words-typed').textContent = countWordsTyped(inputVal);
+  document.getElementById('mistake-count').textContent = mistakes;
+  document.getElementById('accuracy-val').textContent = accuracy + '%';
+  document.getElementById('net-score').textContent = netScore;
+
+  // Progress
+  const progress = (inputLen / passageChars.length) * 100;
+  document.getElementById('progress-bar').style.width = progress + '%';
+
+  // Check if passage complete
+  if (inputLen >= passageChars.length) {
+    endExam();
+  }
+});
+
+function countWordsTyped(input) {
+  return input.trim() === '' ? 0 : input.trim().split(/\s+/).length;
+}
+
+function countCorrectWords(input) {
+  const passageWords = currentPassage.trim().split(/\s+/);
+  const inputWords = input.split(/\s+/);
+  let correct = 0;
+  for (let i = 0; i < Math.min(inputWords.length, passageWords.length); i++) {
+    if (inputWords[i] === passageWords[i]) correct++;
+  }
+  return correct;
+}
+
+// ══════════════════════════════════════════
+//  END EXAM
+// ══════════════════════════════════════════
+function endExam() {
+  if (examFinished) return;
+  examFinished = true;
+  clearInterval(timerInterval);
+  document.getElementById('typing-input').disabled = true;
+  document.getElementById('btn-start').textContent = '✓ Exam Complete';
+
+  const inputVal = document.getElementById('typing-input').value;
+  const passageWords = currentPassage.trim().split(/\s+/);
+  const totalPassageWords = passageWords.length;
+
+  const wordsTypedCount = countWordsTyped(inputVal);
+  const correctWords = countCorrectWords(inputVal);
+  const wordsRemaining = Math.max(0, totalPassageWords - wordsTypedCount);
+  const penalty = Math.floor(mistakes / 4);
+  const netScore = Math.max(0, correctWords - penalty - wordsRemaining);
+  const accuracy = wordsTypedCount > 0
+    ? Math.round((correctWords / wordsTypedCount) * 100)
+    : 0;
+
+  // Show result
+  document.getElementById('res-score').textContent = netScore;
+  document.getElementById('res-typed').textContent = wordsTypedCount;
+  document.getElementById('res-remaining').textContent = wordsRemaining;
+  document.getElementById('res-mistakes').textContent = mistakes;
+  document.getElementById('res-accuracy').textContent = accuracy + '%';
+  document.getElementById('res-gross').textContent = correctWords;
+  document.getElementById('res-penalty').textContent = penalty;
+
+  const verdict = document.getElementById('res-verdict');
+  // Typical BHC passing: 30 wpm net = 300/10min words? 
+  // Let's say passing = net score >= 30
+  if (netScore >= 30) {
+    verdict.textContent = '✓ Satisfactory Performance';
+    verdict.className = 'result-verdict pass';
+  } else {
+    verdict.textContent = '✗ Below Passing Standard';
+    verdict.className = 'result-verdict fail';
+  }
+
+  setTimeout(() => {
+    document.getElementById('result-overlay').classList.add('show');
+  }, 400);
+}
+
+// ══════════════════════════════════════════
+//  INIT ON LOAD
+// ══════════════════════════════════════════
+window.addEventListener('load', () => {
+  currentPassage = pickPassage();
+  buildPassageDisplay(currentPassage);
+});
+</script>
+</body>
+</html>
